@@ -1,0 +1,5 @@
+{
+  "name": "UniV3 LP & Hedge Simulator",
+  "description": "A professional-grade liquidity pool analytics tool simulating PnL, Impermanent Loss, and hedging strategies based on Uniswap V3 mathematics.",
+  "requestFramePermissions": []
+}
