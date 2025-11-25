@@ -14,6 +14,7 @@ const App: React.FC = () => {
     depositAmount: 10000,
     isHedgeEnabled: false,
     hedgePercentage: 100, // Default 100% hedge at lower bound
+    apr: 0,
   });
 
   const handleStateChange = (newState: Partial<AppState>) => {
@@ -29,7 +30,8 @@ const App: React.FC = () => {
       state.minPrice,
       state.maxPrice,
       state.isHedgeEnabled,
-      state.hedgePercentage
+      state.hedgePercentage,
+      state.apr
     );
   }, [state]);
 

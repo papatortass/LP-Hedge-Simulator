@@ -26,12 +26,22 @@ const SummaryStats: React.FC<SummaryStatsProps> = ({ result, state }) => {
         value={formatUSD(result.currentValue)}
         subtext="Initial Deposit"
       />
-      <StatCard 
-        label="Asset Distribution" 
-        value={`${formatNum(result.amountX, 2)} Base`}
-        subtext={`+ ${formatNum(result.amountY, 2)} Quote`}
-        color="text-blue-400"
-      />
+      
+      {state.apr > 0 ? (
+         <StatCard 
+            label="Risk Payoff Time" 
+            value={result.maxRisk > 0 ? `${result.daysToBreakeven.toFixed(1)} Days` : "Risk Free"}
+            subtext={`To cover ${formatUSD(result.maxRisk)} loss`}
+            color="text-amber-400"
+          />
+      ) : (
+        <StatCard 
+          label="Asset Distribution" 
+          value={`${formatNum(result.amountX, 2)} Base`}
+          subtext={`+ ${formatNum(result.amountY, 2)} Quote`}
+          color="text-blue-400"
+        />
+      )}
       
       {state.isHedgeEnabled ? (
         <>
@@ -49,12 +59,36 @@ const SummaryStats: React.FC<SummaryStatsProps> = ({ result, state }) => {
           />
         </>
       ) : (
-         <StatCard 
-            label="Hedge Status" 
-            value="Inactive"
-            subtext="Enable to see reqs"
-            color="text-slate-500"
-          />
+         <>
+         {/* If APR is active, we shifted asset distribution out. If not, we show Hedge Status. 
+             If APR is active and Hedge is inactive, we need to fill the slot.
+             Let's just show Asset Distribution in slot 3 if APR took slot 2. */}
+         {state.apr > 0 ? (
+             <StatCard 
+                label="Asset Distribution" 
+                value={`${formatNum(result.amountX, 2)} Base`}
+                subtext={`+ ${formatNum(result.amountY, 2)} Quote`}
+                color="text-blue-400"
+             />
+         ) : (
+             <StatCard 
+                label="Hedge Status" 
+                value="Inactive"
+                subtext="Enable to see reqs"
+                color="text-slate-500"
+            />
+         )}
+         
+         {/* Slot 4 filling if needed */}
+         {state.apr > 0 && !state.isHedgeEnabled && (
+            <StatCard 
+                label="Hedge Status" 
+                value="Inactive"
+                subtext="Enable to see reqs"
+                color="text-slate-500"
+            />
+         )}
+         </>
       )}
     </div>
   );

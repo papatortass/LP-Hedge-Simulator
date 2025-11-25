@@ -5,6 +5,7 @@ export interface AppState {
   depositAmount: number;
   isHedgeEnabled: boolean;
   hedgePercentage: number; // 0 to 100
+  apr: number; // Annual Percentage Rate
 }
 
 export interface ChartDataPoint {
@@ -28,4 +29,6 @@ export interface SimulationResult {
   hedgeShortAmount: number; // In units of asset X
   hedgeCapitalRequired: number; // In USD (shortAmount * entryPrice)
   data: ChartDataPoint[];
+  maxRisk: number; // Absolute dollar value of worst PnL at boundaries
+  daysToBreakeven: number; // Days to cover maxRisk with APR
 }

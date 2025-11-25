@@ -82,6 +82,17 @@ const InputPanel: React.FC<InputPanelProps> = ({ state, onChange }) => {
                 />
               </div>
             </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-1">Estimated APR (%)</label>
+              <input 
+                type="number" 
+                value={state.apr}
+                onChange={(e) => handleChange('apr', e.target.value)}
+                placeholder="0"
+                className="w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-white focus:ring-2 focus:ring-blue-500 outline-none transition"
+              />
+            </div>
           </div>
         </div>
 
@@ -136,7 +147,7 @@ const InputPanel: React.FC<InputPanelProps> = ({ state, onChange }) => {
         
         <div className="bg-slate-800/50 p-4 rounded border border-slate-800">
            <p className="text-xs text-slate-400 leading-relaxed">
-             <strong>Tip:</strong> "Even PnL" automatically adjusts the hedge so your loss at the upper bound equals your loss at the lower bound.
+             <strong>Tip:</strong> Input an APR to see how many days of yield are required to cover potential losses at the range boundaries.
            </p>
         </div>
 

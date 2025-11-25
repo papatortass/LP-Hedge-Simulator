@@ -11,7 +11,8 @@ export const calculateSimulation = (
   P_min: number,
   P_max: number,
   hedgeEnabled: boolean,
-  hedgePercent: number
+  hedgePercent: number,
+  apr: number
 ): SimulationResult => {
   // Safeguards against division by zero or invalid ranges
   const safePMin = Math.max(0.000001, P_min);
@@ -171,6 +172,28 @@ export const calculateSimulation = (
     });
   }
 
+  // 6. Calculate Risk and Time to Pay Off
+  // Risk is defined as the worst PnL at the boundaries (Min or Max price)
+  // We can look up the exact points in our data array since we added them to the set.
+  // Using a small epsilon for float comparison safety
+  const minPoint = data.find(d => Math.abs(d.price - safePMin) < 0.00001);
+  const maxPoint = data.find(d => Math.abs(d.price - safePMax) < 0.00001);
+
+  const pnlAtMin = minPoint ? minPoint.totalPnL : 0;
+  const pnlAtMax = maxPoint ? maxPoint.totalPnL : 0;
+
+  // "Lower" PnL implies the worst loss (most negative number)
+  const worstPnL = Math.min(pnlAtMin, pnlAtMax);
+  
+  // MaxRisk is the absolute magnitude of that loss. If PnL is positive, Risk is 0.
+  const maxRisk = worstPnL < 0 ? Math.abs(worstPnL) : 0;
+
+  let daysToBreakeven = 0;
+  if (apr > 0 && maxRisk > 0) {
+    const dailyRevenue = deposit * (apr / 100) / 365;
+    daysToBreakeven = maxRisk / dailyRevenue;
+  }
+
   return {
     currentValue: deposit,
     liquidity: L,
@@ -178,7 +201,9 @@ export const calculateSimulation = (
     amountY: initialAmountY,
     hedgeShortAmount: actualShortAmount,
     hedgeCapitalRequired: hedgeCapital,
-    data
+    data,
+    maxRisk,
+    daysToBreakeven
   };
 };
 
